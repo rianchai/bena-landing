@@ -24,3 +24,11 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.fixed.inset-0.z-\[5\].pointer-events-none {
+  transform: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
