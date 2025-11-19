@@ -39,6 +39,7 @@ export default function Navbar() {
 
   return (
     <motion.nav
+      style={{ willChange: "transform", WebkitTransform: "translateZ(0)" }}
       className={`
         fixed top-0 left-0 w-full z-[500]
         bg-white/10 backdrop-blur-[1px]

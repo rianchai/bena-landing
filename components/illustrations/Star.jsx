@@ -7,8 +7,6 @@ import Star2 from "./images/star2.svg";
 import Star3 from "./images/star3.svg";
 import Star4 from "./images/star4.svg";
 
-console.log("✨ Star component file loaded");
-
 const starShapes = [Star1, Star2, Star3, Star4];
 
 
@@ -28,7 +26,7 @@ export default function Star({ count = 30, depth = 1, z = 20 }) {
         hue: 45 + Math.random() * 25,
         brightness: 85 + Math.random() * 15,
       }));
-      console.log("✅ stars generated:", generated.length);
+      
       setStars(generated);
     });
 

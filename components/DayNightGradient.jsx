@@ -10,18 +10,35 @@ import Sun from "./illustrations/Sun";
 
 /* ---------- utils ---------- */
 function mixColor(color1, color2, ratio) {
-  const hexToRgb = (hex) => [
-    parseInt(hex.slice(1, 3), 16),
-    parseInt(hex.slice(3, 5), 16),
-    parseInt(hex.slice(5, 7), 16),
-  ];
+  // ⛑️ Pastikan selalu punya nilai aman
+  if (!color1 || !color2 || typeof color1 !== "string" || typeof color2 !== "string") {
+    return "#9BE8FF"; // fallback warna langit pagi
+  }
+
+  // ⛑️ Clamp ratio biar nggak keluar range 0–1
+  const safeRatio = isNaN(ratio) ? 0 : Math.min(Math.max(ratio, 0), 1);
+
+  const hexToRgb = (hex) => {
+    if (!hex.startsWith("#")) return [255, 255, 255];
+    return [
+      parseInt(hex.slice(1, 3), 16) || 255,
+      parseInt(hex.slice(3, 5), 16) || 255,
+      parseInt(hex.slice(5, 7), 16) || 255,
+    ];
+  };
+
   const rgbToHex = (r, g, b) =>
-    `#${[r, g, b].map((x) => Math.round(x).toString(16).padStart(2, "0")).join("")}`;
+    `#${[r, g, b]
+      .map((x) => Math.round(x).toString(16).padStart(2, "0"))
+      .join("")}`;
+
   const c1 = hexToRgb(color1);
   const c2 = hexToRgb(color2);
-  const mixed = c1.map((c, i) => c + (c2[i] - c) * ratio);
+  const mixed = c1.map((c, i) => c + (c2[i] - c) * safeRatio);
+
   return rgbToHex(...mixed);
 }
+
 
 const cubic = (a, b, c, d, t) => {
   const mt = 1 - t;
@@ -82,17 +99,10 @@ export default function DayNightGradient() {
   const starOpacity = useTransform(t, [0.6, 1], [0, 1]);
   const cloudOpacity = useTransform(t, [0, 0.8, 1], [1, 0.8, 0.5]);
 
-  useMotionValueEvent(sunX, "change", (latest) => {
-    console.log("Sun X:", latest);
-  });
-  useMotionValueEvent(sunY, "change", (latest) => {
-    console.log("Sun Y:", latest);
-  });
-
   return (
     <>
       {/* 🌤️ Wrapper besar tanpa transform */}
-      <div className="relative w-full min-h-[300vh] overflow-hidden">
+      <div className="relative w-full min-h-[300dvh] overflow-hidden">
       
         {/* ☁️ Background clouds */}
         <div className="fixed inset-0 z-[5] pointer-events-none">
@@ -100,16 +110,15 @@ export default function DayNightGradient() {
         </div>
 
         {/* 🌅 Main Scene */}
-        <section
-          ref={sectionRef}
-          style={{
-            background: `linear-gradient(to bottom, ${blendedColor}, ${nightShade})`,
-            transition: "background 0.4s ease-out",
-          }}
-          className={`relative min-h-[400vh] md:min-h-[350vh] overflow-hidden ${textColor}`} 
-        >
           <Navbar />
-
+            <section
+              ref={sectionRef}
+              style={{
+                background: `linear-gradient(to bottom, ${blendedColor}, ${nightShade})`,
+                transition: "background 0.4s ease-out",
+              }}
+              className={`relative min-h-[400dvh] md:min-h-[350dvh] overflow-hidden ${textColor}`} 
+            >
           {/* ⭐ Parallax Stars */}
           <motion.div
             className="fixed inset-0 pointer-events-none"
@@ -154,7 +163,7 @@ export default function DayNightGradient() {
           {/* ================== HOME ================== */}
           <section 
             id="home" 
-            className="relative z-50 min-h-[100vh] flex flex-col justify-center items-center text-center px-6 scroll-mt-[100px]"
+            className="relative z-50 min-h-[100dvh] flex flex-col justify-center items-center text-center px-6 pt-24 md:pt-28 scroll-mt-[100px]"
           >
             <h1 className="flex items-center justify-center gap-3 text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 tracking-tight text-[#5B5B5B]">
               Welcome to 
@@ -184,12 +193,32 @@ export default function DayNightGradient() {
                 for the little explorers who make every day a new adventure. 
               </span>
             </p>
+
+            {/* 🌿 Motion fade-in scroll hint */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 1.2, ease: "easeOut" }}
+              className="mt-12 flex flex-col items-center text-gray-500 select-none"
+            >
+              <p className="text-sm md:text-base tracking-wide font-light">
+                Keep scrolling — there’s more to discover
+              </p>
+              <motion.span
+                animate={{ y: [0, 6, 0] }}
+                transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                className="mt-1 text-2xl"
+              >
+                ↓
+              </motion.span>
+            </motion.div>
+
           </section>
 
           {/* ================== SHOP ================== */}
           <section
             id="shop"
-            className="relative z-50 min-h-[100vh] flex flex-col justify-center items-center text-center px-6 scroll-mt-[100px]"
+            className="relative z-50 min-h-[100dvh] flex flex-col justify-center items-center text-center px-6 scroll-mt-[100px]"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 text-[#5B5B5B] tracking-tight">
               Shop
@@ -230,7 +259,7 @@ export default function DayNightGradient() {
           {/* ================== FIND US ================== */}
           <section
             id="findus"
-            className="relative z-50 min-h-[100vh] flex flex-col justify-center items-center text-center px-6 scroll-mt-[100px]"
+            className="relative z-50 min-h-[100dvh] flex flex-col justify-center items-center text-center px-6 scroll-mt-[100px]"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 text-[#5B5B5B] tracking-tight">
               Find Us
@@ -304,7 +333,7 @@ export default function DayNightGradient() {
           {/* ================== CONTACT ================== */}
           <section
             id="contact"
-            className="relative z-50 min-h-[100vh] flex flex-col justify-center items-center text-center px-6 scroll-mt-[100px]"
+            className="relative z-50 min-h-[100dvh] flex flex-col justify-center items-center text-center px-6 scroll-mt-[100px]"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 text-white tracking-tight">
               Contact
